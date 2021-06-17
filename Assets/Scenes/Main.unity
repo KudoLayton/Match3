@@ -218,8 +218,9 @@ GameObject:
   - component: {fileID: 756363906}
   - component: {fileID: 756363908}
   - component: {fileID: 756363909}
+  - component: {fileID: 756363911}
   m_Layer: 0
-  m_Name: BackgroundPanel
+  m_Name: Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -284,7 +285,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756363905}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3, z: 0}
+  m_LocalPosition: {x: 0, y: -3, z: 1}
   m_LocalScale: {x: 8, y: 8, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -335,3 +336,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &756363911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756363905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e573a73beb060a4a911f9d15e7091d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  elements:
+  - {fileID: 1123123978409982055, guid: b01e9ecdebc32104fa0136d243696e6a, type: 3}
+  - {fileID: 4021580414572941028, guid: c604828867079d24192aaf9bc6e1c529, type: 3}
+  - {fileID: 140044709516540444, guid: 7a6646efce284e749ab71e822c14333a, type: 3}
+  - {fileID: 964095686918863842, guid: 21d438834fe6d9648b54e67a29d8bad2, type: 3}
+  itemSize: {x: 1, y: 1}
