@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class Element : MonoBehaviour
 {
-    // Start is called before the first frame update
+    bool isUnsetId = true;
+    int _id;
+    public int id{
+        get => _id;
+        set
+        {
+            if (isUnsetId)
+                _id = value;
+        }
+    }
     void Start()
     {
         
