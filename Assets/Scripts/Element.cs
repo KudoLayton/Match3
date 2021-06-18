@@ -25,6 +25,11 @@ public class Element : MonoBehaviour
         }
     }
 
+    public MapManager mapManager
+    {
+        set; private get;
+    }
+
     void Start()
     {
     }
@@ -45,6 +50,13 @@ public class Element : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+            {
+                Debug.Log($"{elementValue}: ({id.x}, {id.y})");
+                mapManager.clickElement(id);
+            }
+        }
     }
 }

@@ -22,8 +22,10 @@ public class MapManager : MonoBehaviour
     float removeTime = 1;
     [SerializeField]
     float supplyTime = 1;
+    Stack<Vector2Int> clickElementBuffer;
     void Start()
     {
+        clickElementBuffer = new Stack<Vector2Int>();
         elementList = new List<List<Element>>();
         startPosition = transform.position - (transform.localScale / 2);
         supplementStartPosition = transform.position;
@@ -44,9 +46,43 @@ public class MapManager : MonoBehaviour
                 elementList[i].Add(newElement);
                 newElement.elementValue = newElementValue;
                 newElement.id = new Vector2Int(i, j);
+                newElement.mapManager = this;
             }
         }
         StartCoroutine(initialCleanMatches());
+    }
+
+    public void clickElement(Vector2Int targetElement)
+    {
+        if (clickElementBuffer.Count == 0)
+        {
+            clickElementBuffer.Push(targetElement);
+        }
+        else
+        {
+            Vector2Int first = clickElementBuffer.Pop();
+            Vector2Int second = targetElement;
+
+            if((first - second).magnitude == 1)
+            {
+                swapElement(first, second);
+                Dictionary<Vector2Int, bool> result = scanWholeMap();
+                if(result.Keys.Count > 0)
+                {
+                    StartCoroutine(iterateCleanMatches());
+                }
+                else
+                {
+                    swapElement(first, second);
+                }
+            }
+        }
+    }
+
+    IEnumerator iterateCleanMatches()
+    {
+        for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
+            yield return new WaitForSeconds(removeTime + supplyTime);
     }
 
     IEnumerator initialCleanMatches()
@@ -54,6 +90,20 @@ public class MapManager : MonoBehaviour
         yield return new WaitForSeconds(initalWaitTime);
         for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
             yield return new WaitForSeconds(removeTime + supplyTime);
+    }
+
+    void swapElement(Vector2Int first, Vector2Int second) 
+    {
+        elementList[first.x][first.y].id = second;
+        elementList[second.x][second.y].id = first;
+
+        Element tempElement = elementList[first.x][first.y];
+        elementList[first.x][first.y] = elementList[second.x][second.y];
+        elementList[second.x][second.y] = tempElement;
+
+        Vector3 tempPosition = elementList[first.x][first.y].transform.position;
+        elementList[first.x][first.y].transform.position = elementList[second.x][second.y].transform.position;
+        elementList[second.x][second.y].transform.position = tempPosition;
     }
 
     List<Vector2Int> scanHorLine(int lineIdx)
@@ -174,6 +224,7 @@ public class MapManager : MonoBehaviour
                 Element newElement = newElementObject.GetComponent<Element>();
                 elementList[lineIdx].Add(newElement);
                 newElement.elementValue = newElementValue;
+                newElement.mapManager = this;
             }
 
             for(int i = 0; i < height; ++i)

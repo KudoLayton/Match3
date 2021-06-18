@@ -353,4 +353,10 @@ MonoBehaviour:
   - {fileID: 4021580414572941028, guid: c604828867079d24192aaf9bc6e1c529, type: 3}
   - {fileID: 140044709516540444, guid: 7a6646efce284e749ab71e822c14333a, type: 3}
   - {fileID: 964095686918863842, guid: 21d438834fe6d9648b54e67a29d8bad2, type: 3}
+  - {fileID: 3289483742532396781, guid: 979fd9eb8968ecb4ab6639e6e36193c7, type: 3}
+  - {fileID: 6872568641380064775, guid: b8efcfe62347513409f200ba48250fa2, type: 3}
+  matchSize: 3
   itemSize: {x: 1, y: 1}
+  initalWaitTime: 1
+  removeTime: 1
+  supplyTime: 1
