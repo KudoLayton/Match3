@@ -19,10 +19,11 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     float initalWaitTime = 1;
     [SerializeField]
-    float removeTime = 1;
+    float removeTime = 0;
     [SerializeField]
     float supplyTime = 1;
     Stack<Vector2Int> clickElementBuffer;
+    bool isClickable = true;
     void Start()
     {
         clickElementBuffer = new Stack<Vector2Int>();
@@ -52,28 +53,69 @@ public class MapManager : MonoBehaviour
         StartCoroutine(initialCleanMatches());
     }
 
+    enum SwapDirection
+    {
+        Right,
+        Up
+    }
+    List<(Vector2Int, SwapDirection)> scanScorePossibility()
+    {
+        List<(Vector2Int, SwapDirection)> scanResult = new List<(Vector2Int, SwapDirection)>();
+
+        for(int i = 0; i < (width - 1); ++i)
+        {
+            for(int j = 0; j < height; ++j)
+            {
+                Vector2Int first = new Vector2Int(i, j);
+                Vector2Int second = new Vector2Int(i + 1, j);
+                swapElement(first, second);
+                if (scanWholeMap().Keys.Count > 0)
+                    scanResult.Add((first, SwapDirection.Right));
+                swapElement(first, second);
+            }
+        }
+
+        for(int i = 0; i < width; ++i)
+        {
+            for(int j = 0; j < (height - 1); ++j)
+            {
+                Vector2Int first = new Vector2Int(i, j);
+                Vector2Int second = new Vector2Int(i, j + 1);
+                swapElement(first, second);
+                if (scanWholeMap().Keys.Count > 0)
+                    scanResult.Add((first, SwapDirection.Up));
+                swapElement(first, second);
+            }
+        }
+
+        return scanResult;
+    }
+
     public void clickElement(Vector2Int targetElement)
     {
-        if (clickElementBuffer.Count == 0)
+        if (isClickable)
         {
-            clickElementBuffer.Push(targetElement);
-        }
-        else
-        {
-            Vector2Int first = clickElementBuffer.Pop();
-            Vector2Int second = targetElement;
-
-            if((first - second).magnitude == 1)
+            if (clickElementBuffer.Count == 0)
             {
-                swapElement(first, second);
-                Dictionary<Vector2Int, bool> result = scanWholeMap();
-                if(result.Keys.Count > 0)
-                {
-                    StartCoroutine(iterateCleanMatches());
-                }
-                else
+                clickElementBuffer.Push(targetElement);
+            }
+            else
+            {
+                Vector2Int first = clickElementBuffer.Pop();
+                Vector2Int second = targetElement;
+
+                if ((first - second).magnitude == 1)
                 {
                     swapElement(first, second);
+                    Dictionary<Vector2Int, bool> result = scanWholeMap();
+                    if (result.Keys.Count > 0)
+                    {
+                        StartCoroutine(iterateCleanMatches());
+                    }
+                    else
+                    {
+                        swapElement(first, second);
+                    }
                 }
             }
         }
@@ -81,15 +123,19 @@ public class MapManager : MonoBehaviour
 
     IEnumerator iterateCleanMatches()
     {
+        isClickable = false;
         for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
             yield return new WaitForSeconds(removeTime + supplyTime);
+        isClickable = true;
     }
 
     IEnumerator initialCleanMatches()
     {
+        isClickable = false;
         yield return new WaitForSeconds(initalWaitTime);
         for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
             yield return new WaitForSeconds(removeTime + supplyTime);
+        isClickable = true;
     }
 
     void swapElement(Vector2Int first, Vector2Int second) 

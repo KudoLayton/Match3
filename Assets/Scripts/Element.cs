@@ -54,7 +54,6 @@ public class Element : MonoBehaviour
         {
             if (GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
             {
-                Debug.Log($"{elementValue}: ({id.x}, {id.y})");
                 mapManager.clickElement(id);
             }
         }
