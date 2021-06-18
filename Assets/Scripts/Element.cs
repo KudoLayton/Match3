@@ -39,7 +39,7 @@ public class Element : MonoBehaviour
         float elapsedTime = 0;
         Vector3 startPosition = transform.position;
         Vector3 displacement = target - startPosition;
-        while(elapsedTime <= moveTime)
+        while(elapsedTime < moveTime)
         {
             yield return new WaitForEndOfFrame();
             elapsedTime += Time.deltaTime;

@@ -21,7 +21,7 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     float removeTime = 0;
     [SerializeField]
-    float supplyTime = 1;
+    float supplyTime = 0.5f;
     Stack<Vector2Int> clickElementBuffer;
     bool isClickable = true;
     void Start()
@@ -91,6 +91,37 @@ public class MapManager : MonoBehaviour
         return scanResult;
     }
 
+    void resetMap()
+    {
+        for(int i = 0; i < width; ++i)
+        {
+            for(int j = 0; j < height; ++j)
+            {
+                Destroy(elementList[i][j].gameObject);
+            }
+            elementList[i].Clear();
+        }
+        for (int i = 0; i < width; ++i)
+        {
+            elementList.Add(new List<Element>());
+            for (int j = 0; j < height; ++j)
+            {
+                Vector2 instancePosition = itemSize;
+                instancePosition.x *= i;
+                instancePosition.y *= j;
+                instancePosition += startPosition + (itemSize / 2);
+                int newElementValue = Random.Range(0, elements.Count);
+                GameObject newElementObject = Instantiate(elements[newElementValue], instancePosition, Quaternion.identity);
+                Element newElement = newElementObject.GetComponent<Element>();
+                elementList[i].Add(newElement);
+                newElement.elementValue = newElementValue;
+                newElement.id = new Vector2Int(i, j);
+                newElement.mapManager = this;
+            }
+        }
+        StartCoroutine(initialCleanMatches());
+    }
+
     public void clickElement(Vector2Int targetElement)
     {
         if (isClickable)
@@ -127,6 +158,8 @@ public class MapManager : MonoBehaviour
         for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
             yield return new WaitForSeconds(removeTime + supplyTime);
         isClickable = true;
+        if (scanScorePossibility().Count == 0)
+            resetMap();
     }
 
     IEnumerator initialCleanMatches()
@@ -136,6 +169,8 @@ public class MapManager : MonoBehaviour
         for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
             yield return new WaitForSeconds(removeTime + supplyTime);
         isClickable = true;
+        if (scanScorePossibility().Count == 0)
+            resetMap();
     }
 
     void swapElement(Vector2Int first, Vector2Int second) 
