@@ -15,10 +15,14 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     Vector2 itemSize = new Vector2(1, 1);
     Vector2 startPosition;
+    Vector2 supplementStartPosition;
     void Start()
     {
         elementList = new List<List<Element>>();
         startPosition = transform.position - (transform.localScale / 2);
+        supplementStartPosition = transform.position;
+        supplementStartPosition.x -= transform.localScale.x / 2;
+        supplementStartPosition.y += transform.localScale.y / 2;
         for (int i = 0; i < width; ++i)
         {
             elementList.Add(new List<Element>());
@@ -150,6 +154,19 @@ public class MapManager : MonoBehaviour
         foreach(int lineIdx in changedLines.Keys)
         {
             elementList[lineIdx].RemoveAll((x) => x == null);
+            int supplementNum = height - elementList[lineIdx].Count;
+            for(int i = 0; i < supplementNum; ++i)
+            {
+                Vector2 instancePosition = itemSize;
+                instancePosition.x *= lineIdx;
+                instancePosition.y *= i;
+                instancePosition += supplementStartPosition + (itemSize / 2);
+                int newElementValue = Random.Range(0, elements.Count);
+                GameObject newElementObject = Instantiate(elements[newElementValue], instancePosition, Quaternion.identity);
+                Element newElement = newElementObject.GetComponent<Element>();
+                elementList[lineIdx].Add(newElement);
+                newElement.elementValue = newElementValue;
+            }
         }
     }
 
