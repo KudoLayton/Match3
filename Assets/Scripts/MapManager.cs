@@ -35,6 +35,13 @@ public class MapManager : MonoBehaviour
                 newElement.elementValue = newElementValue;
             }
         }
+        StartCoroutine(initialCleanMatches());
+    }
+
+    IEnumerator initialCleanMatches()
+    {
+        yield return new WaitForSeconds(10);
+        removeMatchOnce();
     }
 
     List<Vector2Int> scanHorLine(int lineIdx)
@@ -129,20 +136,25 @@ public class MapManager : MonoBehaviour
         return scoreElementList;
     }
 
-    /// Debug
-    void testScanAlgorithm()
+    void removeMatchOnce()
     {
         Dictionary<Vector2Int, bool> scanResult = scanWholeMap();
+        Dictionary<int, bool> changedLines = new Dictionary<int, bool>();
         foreach(Vector2Int element in scanResult.Keys)
         {
-            elementList[element.x][element.y].GetComponentInChildren<TextMeshPro>().faceColor = new Color(1, 0, 0);
+            Destroy(elementList[element.x][element.y].gameObject);
+            elementList[element.x][element.y] = null;
+            changedLines[element.x] = true;
+        }
+
+        foreach(int lineIdx in changedLines.Keys)
+        {
+            elementList[lineIdx].RemoveAll((x) => x == null);
         }
     }
-    /// End Debug
 
     // Update is called once per frame
     void Update()
     {
-        testScanAlgorithm();
     }
 }
