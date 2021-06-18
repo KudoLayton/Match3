@@ -16,6 +16,12 @@ public class MapManager : MonoBehaviour
     Vector2 itemSize = new Vector2(1, 1);
     Vector2 startPosition;
     Vector2 supplementStartPosition;
+    [SerializeField]
+    float initalWaitTime = 1;
+    [SerializeField]
+    float removeTime = 1;
+    [SerializeField]
+    float supplyTime = 1;
     void Start()
     {
         elementList = new List<List<Element>>();
@@ -44,8 +50,9 @@ public class MapManager : MonoBehaviour
 
     IEnumerator initialCleanMatches()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(initalWaitTime);
         removeMatchOnce();
+        yield return new WaitForSeconds(removeTime + supplyTime);
     }
 
     List<Vector2Int> scanHorLine(int lineIdx)
@@ -166,6 +173,15 @@ public class MapManager : MonoBehaviour
                 Element newElement = newElementObject.GetComponent<Element>();
                 elementList[lineIdx].Add(newElement);
                 newElement.elementValue = newElementValue;
+            }
+
+            for(int i = 0; i < height; ++i)
+            {
+                Vector2 targetPosition = itemSize;
+                targetPosition.x *= lineIdx;
+                targetPosition.y *= i;
+                targetPosition += startPosition + (itemSize / 2);
+                StartCoroutine(elementList[lineIdx][i].moveTarget(targetPosition, supplyTime));
             }
         }
     }

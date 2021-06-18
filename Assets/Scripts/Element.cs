@@ -18,10 +18,24 @@ public class Element : MonoBehaviour
             }
         }
     }
+
     void Start()
     {
     }
 
+    public IEnumerator moveTarget(Vector3 target, float moveTime)
+    {
+        float elapsedTime = 0;
+        Vector3 startPosition = transform.position;
+        Vector3 displacement = target - startPosition;
+        while(elapsedTime <= moveTime)
+        {
+            yield return new WaitForEndOfFrame();
+            elapsedTime += Time.deltaTime;
+            transform.position = displacement * (1 - Mathf.Pow((1 - (elapsedTime / moveTime)), 5)) + startPosition;
+        }
+        transform.position = target;
+    }
     // Update is called once per frame
     void Update()
     {
