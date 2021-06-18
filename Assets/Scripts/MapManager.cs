@@ -35,7 +35,6 @@ public class MapManager : MonoBehaviour
                 newElement.elementValue = newElementValue;
             }
         }
-        testScanAlgorithm();
     }
 
     List<Vector2Int> scanHorLine(int lineIdx)
@@ -63,8 +62,15 @@ public class MapManager : MonoBehaviour
                         scoreList.Add(scanElement);
                 }
                 scanBuffer.Clear();
+                scanBuffer.Add(new Vector2Int(i, lineIdx));
             }
         }
+        if(scanBuffer.Count >= matchSize)
+        {
+            foreach (Vector2Int scanElement in scanBuffer)
+                scoreList.Add(scanElement);
+        }
+
         return scoreList;
     }
 
@@ -86,15 +92,22 @@ public class MapManager : MonoBehaviour
             }
             else
             {
-                pastValue = elementList[i][lineIdx].elementValue;
+                pastValue = elementList[lineIdx][i].elementValue;
                 if(scanBuffer.Count >= matchSize)
                 {
                     foreach (Vector2Int scanElement in scanBuffer)
                         scoreList.Add(scanElement);
                 }
                 scanBuffer.Clear();
+                scanBuffer.Add(new Vector2Int(lineIdx, i));
             }
         }
+        if(scanBuffer.Count >= matchSize)
+        {
+            foreach (Vector2Int scanElement in scanBuffer)
+                scoreList.Add(scanElement);
+        }
+
         return scoreList;
     }
 
@@ -103,13 +116,13 @@ public class MapManager : MonoBehaviour
         Dictionary<Vector2Int, bool> scoreElementList = new Dictionary<Vector2Int, bool>();
         for (int i = 0; i < width; ++i)
         {
-            List<Vector2Int> lineScoreList = scanHorLine(i);
+            List<Vector2Int> lineScoreList = scanVerLine(i);
             foreach (Vector2Int scoreElement in lineScoreList)
                 scoreElementList[scoreElement] = true;
         }
         for (int i = 0; i < height; ++i)
         {
-            List<Vector2Int> lineScoreList = scanVerLine(i);
+            List<Vector2Int> lineScoreList = scanHorLine(i);
             foreach (Vector2Int scoreElement in lineScoreList)
                 scoreElementList[scoreElement] = true;
         }
@@ -130,6 +143,6 @@ public class MapManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        testScanAlgorithm();
     }
 }
