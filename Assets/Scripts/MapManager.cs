@@ -51,8 +51,8 @@ public class MapManager : MonoBehaviour
     IEnumerator initialCleanMatches()
     {
         yield return new WaitForSeconds(initalWaitTime);
-        removeMatchOnce();
-        yield return new WaitForSeconds(removeTime + supplyTime);
+        if(removeMatchOnce() > 0)
+            yield return new WaitForSeconds(removeTime + supplyTime);
     }
 
     List<Vector2Int> scanHorLine(int lineIdx)
@@ -147,7 +147,7 @@ public class MapManager : MonoBehaviour
         return scoreElementList;
     }
 
-    void removeMatchOnce()
+    int removeMatchOnce()
     {
         Dictionary<Vector2Int, bool> scanResult = scanWholeMap();
         Dictionary<int, bool> changedLines = new Dictionary<int, bool>();
@@ -184,6 +184,7 @@ public class MapManager : MonoBehaviour
                 StartCoroutine(elementList[lineIdx][i].moveTarget(targetPosition, supplyTime));
             }
         }
+        return scanResult.Count;
     }
 
     // Update is called once per frame
