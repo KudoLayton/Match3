@@ -43,6 +43,7 @@ public class MapManager : MonoBehaviour
                 Element newElement = newElementObject.GetComponent<Element>();
                 elementList[i].Add(newElement);
                 newElement.elementValue = newElementValue;
+                newElement.id = new Vector2Int(i, j);
             }
         }
         StartCoroutine(initialCleanMatches());
@@ -181,6 +182,7 @@ public class MapManager : MonoBehaviour
                 targetPosition.x *= lineIdx;
                 targetPosition.y *= i;
                 targetPosition += startPosition + (itemSize / 2);
+                elementList[lineIdx][i].id = new Vector2Int(lineIdx, i);
                 StartCoroutine(elementList[lineIdx][i].moveTarget(targetPosition, supplyTime));
             }
         }

@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Element : MonoBehaviour
 {
+    public Vector2Int id
+    {
+        get;
+        set;
+    }
+
     bool haveElementValueSet = false;
     int _elementValue;
     public int elementValue
