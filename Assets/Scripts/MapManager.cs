@@ -52,7 +52,7 @@ public class MapManager : MonoBehaviour
     IEnumerator initialCleanMatches()
     {
         yield return new WaitForSeconds(initalWaitTime);
-        if(removeMatchOnce() > 0)
+        for(int matchedScore = removeMatchOnce(); matchedScore > 0; matchedScore = removeMatchOnce())
             yield return new WaitForSeconds(removeTime + supplyTime);
     }
 
