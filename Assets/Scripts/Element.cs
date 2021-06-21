@@ -47,6 +47,7 @@ public class Element : MonoBehaviour
             yield return new WaitForEndOfFrame();
             transform.localScale = Vector3.one * (1 - elapsedTime / destroyTime);
         }
+        transform.localScale = Vector3.zero;
         endParticle.Play();
         yield return new WaitForSeconds(endParticle.main.duration);
         Destroy(gameObject);
