@@ -358,5 +358,5 @@ MonoBehaviour:
   matchSize: 3
   itemSize: {x: 1, y: 1}
   initalWaitTime: 1
-  removeTime: 1
-  supplyTime: 1
+  removeTime: 0.1
+  supplyTime: 0.5

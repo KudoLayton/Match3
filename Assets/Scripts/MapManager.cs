@@ -19,7 +19,7 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     float initalWaitTime = 1;
     [SerializeField]
-    float removeTime = 0;
+    float removeTime = 1;
     [SerializeField]
     float supplyTime = 0.5f;
     Stack<Vector2Int> clickElementBuffer;
@@ -285,7 +285,7 @@ public class MapManager : MonoBehaviour
         Dictionary<int, bool> changedLines = new Dictionary<int, bool>();
         foreach(Vector2Int element in scanResult.Keys)
         {
-            Destroy(elementList[element.x][element.y].gameObject);
+            StartCoroutine(elementList[element.x][element.y].destroyElement(removeTime));
             elementList[element.x][element.y] = null;
             changedLines[element.x] = true;
         }
@@ -315,7 +315,7 @@ public class MapManager : MonoBehaviour
                 targetPosition.y *= i;
                 targetPosition += startPosition + (itemSize / 2);
                 elementList[lineIdx][i].id = new Vector2Int(lineIdx, i);
-                StartCoroutine(elementList[lineIdx][i].moveTarget(targetPosition, supplyTime));
+                StartCoroutine(elementList[lineIdx][i].moveTarget(targetPosition, removeTime, supplyTime));
             }
         }
         return scanResult.Count;

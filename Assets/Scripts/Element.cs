@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Element : MonoBehaviour
 {
@@ -30,15 +31,33 @@ public class Element : MonoBehaviour
         set; private get;
     }
 
+    ParticleSystem endParticle;
+    TextMeshPro textMesh;
+
     void Start()
     {
+        endParticle = GetComponentInChildren<ParticleSystem>();
+        textMesh = GetComponent<TextMeshPro>();
     }
 
-    public IEnumerator moveTarget(Vector3 target, float moveTime)
+    public IEnumerator destroyElement(float destroyTime)
+    {
+        for (float elapsedTime = 0; elapsedTime < destroyTime; elapsedTime += Time.deltaTime)
+        {
+            yield return new WaitForEndOfFrame();
+            transform.localScale = Vector3.one * (1 - elapsedTime / destroyTime);
+        }
+        endParticle.Play();
+        yield return new WaitForSeconds(endParticle.main.duration);
+        Destroy(gameObject);
+    }
+
+    public IEnumerator moveTarget(Vector3 target,float delayTime, float moveTime)
     {
         float elapsedTime = 0;
         Vector3 startPosition = transform.position;
         Vector3 displacement = target - startPosition;
+        yield return new WaitForSeconds(delayTime);
         while(elapsedTime < moveTime)
         {
             yield return new WaitForEndOfFrame();
