@@ -37,7 +37,7 @@ public class Element : MonoBehaviour
     void Start()
     {
         endParticle = GetComponentInChildren<ParticleSystem>();
-        textMesh = GetComponent<TextMeshPro>();
+        textMesh = GetComponentInChildren<TextMeshPro>();
     }
 
     public IEnumerator destroyElement(float destroyTime)
@@ -66,6 +66,10 @@ public class Element : MonoBehaviour
         }
         transform.position = target;
     }
+
+    public void activateElement() => textMesh.faceColor = new Color(1, 0, 0);
+    public void deactivateElement() => textMesh.faceColor = new Color(0, 0, 0);
+
     // Update is called once per frame
     void Update()
     {

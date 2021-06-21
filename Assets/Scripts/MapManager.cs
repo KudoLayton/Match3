@@ -129,11 +129,13 @@ public class MapManager : MonoBehaviour
             if (clickElementBuffer.Count == 0)
             {
                 clickElementBuffer.Push(targetElement);
+                elementList[targetElement.x][targetElement.y].activateElement();
             }
             else
             {
                 Vector2Int first = clickElementBuffer.Pop();
                 Vector2Int second = targetElement;
+                elementList[first.x][first.y].deactivateElement();
 
                 if ((first - second).magnitude == 1)
                 {
