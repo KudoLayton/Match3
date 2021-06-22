@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using TMPro;
+using System.Linq;
 
 public class MapManager : MonoBehaviour
 {
@@ -24,14 +26,24 @@ public class MapManager : MonoBehaviour
     float supplyTime = 0.5f;
     Stack<Vector2Int> clickElementBuffer;
     bool isClickable = true;
+    [SerializeField]
+    UnityEvent<int, int, int> updateScore;
+    int score;
+    int maxSpeed;
+    Queue<(float, int)> scoreHistory;
+
+
     void Start()
     {
+        score = 0;
+        maxSpeed = 0;
         clickElementBuffer = new Stack<Vector2Int>();
         elementList = new List<List<Element>>();
         startPosition = transform.position - (transform.localScale / 2);
         supplementStartPosition = transform.position;
         supplementStartPosition.x -= transform.localScale.x / 2;
         supplementStartPosition.y += transform.localScale.y / 2;
+        scoreHistory = new Queue<(float, int)>();
         for (int i = 0; i < width; ++i)
         {
             elementList.Add(new List<Element>());
@@ -285,6 +297,9 @@ public class MapManager : MonoBehaviour
     {
         Dictionary<Vector2Int, bool> scanResult = scanWholeMap();
         Dictionary<int, bool> changedLines = new Dictionary<int, bool>();
+        score += scanResult.Keys.Count;
+        scoreHistory.Enqueue((Time.time, scanResult.Keys.Count));
+
         foreach(Vector2Int element in scanResult.Keys)
         {
             StartCoroutine(elementList[element.x][element.y].destroyElement(removeTime));
@@ -326,5 +341,14 @@ public class MapManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        try
+        {
+            if (scoreHistory.Count > 0)
+                for (float minTime = Time.time - 60; scoreHistory.Peek().Item1 < minTime; scoreHistory.Dequeue()) ;
+        }
+        catch (System.InvalidOperationException) { }
+        int speed = (from x in scoreHistory select x.Item2).Sum();
+        maxSpeed = Mathf.Max(speed, maxSpeed);
+        updateScore.Invoke(score, speed, maxSpeed);
     }
 }
